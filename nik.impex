@@ -1,0 +1,387 @@
+#ant addoninstall -Daddonnames="myAddOn" -DaddonStorefront.yacceleratorstorefront="myStorefront"
+#ant addoninstall -Daddonnames=cmsoccaddon -DaddonStorefront.ycommercewebservices=ggcommercewebservices
+
+#PATH: goHy2\hybris\bin\custom\hisensestore\resources\hisensestore
+
+#GIT: git clone --single-branch --branch feature/hisenseStore https://gitea.vsakdan.com/igorg/goHy2.git
+
+#Produkt mora imeti naslednje podatke:
+
+#o	Osnovne podatke (id, name, description, katalog, availability group (na katerem trgu je viden), preveri tudi obstoječe za ostale
+#o	Slike 
+#o	Pripisano kategorijo 
+#o	Pripisano klasifikacijo (in posledično klasifikacijsko strukturo)
+#o	Zalogo
+#o	Marketinške podatke (features, manuals, badges,..)
+
+#COMMAND: select * from {Product} where {code}='nikKorosec'
+
+#BUNDLEPRICE?
+
+#prosim preveri če se ti vse ok prikazuje na frontendu za ta produkt.
+
+#pazi da je produkt posinhroniziran iz Staged v Online katalog. 
+#zagnana naj bo Solr indexacija -> Solr je search engine za hybris -> preveri dokumentacijo.
+
+# ----- categories.impex ----- # MAM2x
+
+$productCatalog=ggProductCatalog
+$productCatalogName=GG Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$supercategories=source(code, $catalogVersion)[unique=true]
+$categories=target(code, $catalogVersion)[unique=true]
+
+INSERT_UPDATE Category;code[unique=true];allowedPrincipals(uid)[default='customergroup'];$catalogVersion
+;1288
+
+# ---- categories.lang -----# MAM2x
+
+$productCatalog=ggProductCatalog
+$productCatalogName=GG Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+$lang=en
+
+UPDATE Category;code[unique=true];$catalogVersion;name[lang=$lang]
+;1288;;Liker;
+
+$productCatalog=ggProductCatalog
+$productCatalogName=GG Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+$lang=sr
+
+UPDATE Category;code[unique=true];$catalogVersion;name[lang=$lang]
+;hisenseprod00;;Liker;
+
+# ----- suppliers.impex ----- # MAM2x
+
+$productCatalog=ggProductCatalog
+$productCatalogName=GG Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$superCategories=superCategories(code, $catalogVersion)
+
+INSERT_UPDATE Category;code[unique=true];$superCategories;allowedPrincipals(uid)[default='customergroup'];$catalogVersion
+;brands;;
+;brand_5;brands
+
+# ----- products.impex ----- # MAM2x
+
+$productCatalog=ggProductCatalog
+$productCatalogName=GG Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$supercategories=supercategories(code, $catalogVersion)
+$baseProduct=baseProduct(code,$catalogVersion)
+$approved=approvalstatus(code)[default='approved']
+$availabilityGroup=pag-hisense-rs
+$picture=picture(code,$catalogVersion)
+$thumbnail=thumbnail(code,$catalogVersion)
+
+INSERT_UPDATE Product;code[unique=true];$supercategories;manufacturerName;manufacturerAID;unit(code);ean;variantType(code);$catalogVersion;$approved
+;nikKorosec;1288, brand_5;Sony;ACC-CSPW;pieces;4901780755943
+
+INSERT_UPDATE Product;code[unique=true];$supercategories;manufacturerName;manufacturerAID;unit(code);ean;variantType(code);$catalogVersion;approvalstatus(code)
+;nikKorosec;1288, brand_5;Sony;ACC-CSPW;pieces;4901780755943;;;approved
+
+# ----- products-lang.impex ----- # MAM2x
+
+$productCatalog=ggProductCatalog
+$productCatalogName=GG Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+$lang=en
+
+UPDATE Product;code[unique=true];$catalogVersion;name[lang=$lang];summary[lang=$lang];description[lang=$lang]
+;nikKorosec;;JAGERMEISTER;LIQUER;Immerse yourself in a screen larger than what 97% of consumers have 75-inch Large screen. Globally, only 2.6% consumers have a 75-inch TV. With the 75-inch Hisense Mini-LED ULED TV, enjoy a viewing experience that few others can enjoy.
+
+$productCatalog=ggProductCatalog
+$productCatalogName=GG Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+$lang=sr
+
+UPDATE Product;code[unique=true];$catalogVersion;name[lang=$lang];summary[lang=$lang];description[lang=$lang]
+;nikKorosec;;JAGERMEISTER;LIQUER;Immerse yourself in a screen larger than what 97% of consumers have 75-inch Large screen. Globally, only 2.6% consumers have a 75-inch TV. With the 75-inch Hisense Mini-LED ULED TV, enjoy a viewing experience that few others can enjoy.
+
+
+# ----- products-media.impex ----- # MAM2x
+
+$productCatalog=ggProductCatalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$thumbnail=thumbnail(code, $catalogVersion)
+$picture=picture(code, $catalogVersion)
+$thumbnails=thumbnails(code, $catalogVersion)
+$detail=detail(code, $catalogVersion)
+$normal=normal(code, $catalogVersion)
+$others=others(code, $catalogVersion)
+$data_sheet=data_sheet(code, $catalogVersion)
+$medias=medias(code, $catalogVersion)
+$galleryImages=galleryImages(qualifier, $catalogVersion)
+$siteResource=jar:com.hisense.hisensestore.constants.HisensestoreConstants&/hisensestore/import/sampledata/productCatalogs/$productCatalog
+$interactiveMedia=interactiveMedia(qualifier, $catalogVersion)
+
+INSERT_UPDATE Media;mediaFormat(qualifier);code[unique=true];@media[translator=de.hybris.platform.impex.jalo.media.MediaDataTranslator];mime[default='image/jpeg'];$catalogVersion;folder(qualifier)
+;1200Wx1200H;/1200Wx1200H/jager_1200.jpg;$siteResource/images/1200Wx1200H/jager_1200.jpg;;;images
+;515Wx515H;/515Wx515H/jager_515.jpg;$siteResource/images/515Wx515H/jager_515.jpg;;;images
+;300Wx300H;/300Wx300H/jager_300.jpg;$siteResource/images/300Wx300H/jager_300.jpg;;;images
+;96Wx96H;/96Wx96H/jager_96.jpg;$siteResource/images/96Wx96H/jager_96.jpg;;;images
+;65Wx65H;/65Wx65H/jager_65.jpg;$siteResource/images/65Wx65H/jager_65.jpg;;;images
+;30Wx30H;/30Wx30H/jager_30.jpg;$siteResource/images/30Wx30H/jager_30.jpg;;;images
+
+# ----- media-container.impex ----- # MAM2x
+
+$productCatalog=ggProductCatalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+#INSERT_UPDATE MediaContainer;qualifier[unique=true];medias(code);$catalogVersion
+#;Media_Container_Test_Pro;/1200Wx1200H/jager_1200.jpg,/515Wx515H/jager_515.jpg,/300Wx300H/jager_300.jpg,/96Wx96H/jager_96.jpg,/65Wx65H/jager_65.jpg,/30Wx30H/jager_30.jpg
+
+# ----- insert-the-product.impex ----- #
+
+#INSERT_UPDATE Product;code[unique=true];$supercategories;manufacturerName;manufacturerAID;ean;variantType(code);unit(code)[default=pieces];name[lang=$lang];description[lang=$lang];summary[lang=$lang];$prices;$approved;$taxGroup;$catalogVersion
+#;Test_Pro;;test;;;;;TEST PRODUCT;TEST PRODUCT;;1 pieces = 1 USD N
+
+#$productCatalog=ggProductCatalog
+#$productCatalogName=GG Product Catalog
+#$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+#$supercategories=supercategories(code, $catalogVersion)
+#$baseProduct=baseProduct(code,$catalogVersion)
+#$approved=approvalstatus(code)[default='approved']
+#$availabilityGroup=pag-hisense-rs
+#$picture=picture(code,$catalogVersion)
+#$thumbnail=thumbnail(code,$catalogVersion)
+
+#INSERT_UPDATE Product;code[unique=true];$supercategories;manufacturerName;manufacturerAID;unit(code);ean;variantType(code);$catalogVersion;approvalstatus(code);description
+#;999929;1288, brand_5;Jagermeister;1L;pieces;4901780755943;;;approved;The Meister of our craft
+
+# ----- link-to-media.impex ----- # MAM2x
+
+$productCatalog=ggProductCatalog
+$productCatalogName=GG Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+$thumbnail=thumbnail(code, $catalogVersion)
+$picture=picture(code, $catalogVersion)
+$thumbnails=thumbnails(code, $catalogVersion)
+$detail=detail(code, $catalogVersion)
+$normal=normal(code, $catalogVersion)
+$others=others(code, $catalogVersion)
+$medias=medias(code, $catalogVersion)
+$galleryImages=galleryImages(qualifier, $catalogVersion)
+$classification=classification(code, $catalogVersion)
+$interactiveMedia=interactiveMedia(qualifier, $catalogVersion)
+
+#INSERT_UPDATE Product;code[unique=true];$picture;$thumbnail;$detail;$others;$normal;$thumbnails;$galleryImages;$catalogVersion;$interactiveMedia
+#;999929;/300Wx300H/jager_300.jpg;/96Wx96H/jager_96.jpg;/1200Wx1200H/jager_1200.jpg;/515Wx515H/jager_515.jpg,/65Wx65H/jager_65.jpg,/30Wx30H/jager_30.jpg;/300Wx300H/jager_300.jpg;/96Wx96H/jager_96.jpg;Media_Container_Test_Pro;
+
+INSERT_UPDATE Product;code[unique=true];$picture;$thumbnail;$detail;$others;$normal;$thumbnails;$galleryImages;$catalogVersion;$interactiveMedia
+;nikKorosec;/1200Wx1200H/jager_1200.jpg;/96Wx96H/jager_96.jpg;/1200Wx1200H/jager_1200.jpg;/515Wx515H/jager_515.jpg,/65Wx65H/jager_65.jpg,/30Wx30H/jager_30.jpg;/300Wx300H/jager_300.jpg;/96Wx96H/jager_96.jpg;Media_Container_Test_Pro;;360
+
+UPDATE Product;code[unique=true];$picture;$thumbnail;$detail;$others;$normal;$thumbnails;$galleryImages;$catalogVersion;$interactiveMedia
+;nikKorosec;/300Wx300H/jager_300.jpg;/96Wx96H/jager_96.jpg;;/515Wx515H/jager_515.jpg,/515Wx515H/jager_515.jpg,/65Wx65H/jager_65.jpg,/65Wx65H/jager_65.jpg,/30Wx30H/jager_30.jpg,/30Wx30H/jager_30.jpg;/300Wx300H/jager_300.jpg,/300Wx300H/jager_300.jpg;/96Wx96H/jager_96.jpg,/96Wx96H/jager_96.jpg;Media_Container_Test_Pro;;360
+
+# ----- comment.impex ----- #
+
+#$productCatalog=ggProductCatalog
+#$productCatalogName=GG Product Catalog
+#$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+#$vendor=hisense
+
+#INSERT_UPDATE Warehouse;code[unique=true];vendor(code)[default=$vendor];default[default='false']
+#;Nakano
+
+#INSERT_UPDATE StockLevel;available;warehouse(code)[default='Nakano',unique=true];inStockStatus(code)[default='notSpecified'];overSelling;preOrder;productCode[unique=true];reserved
+#;8;;forceOutOfStock;0;0;nikKorosec;0
+
+
+#$productCatalog=ggProductCatalog
+#$productCatalogName=GG Product Catalog
+#$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+#$classification=classification(code, $catalogVersion)
+
+
+#INSERT_UPDATE Product;code[unique=true];$classification
+#;nikKorosec;300
+
+# ----- features.impex ----- # MAM2x
+
+$productCatalog=ggProductCatalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$siteResource=jar:com.hisense.hisensestore.constants.HisensestoreConstants&/hisensestore/import/sampledata/productCatalogs/$productCatalog
+
+INSERT_UPDATE GGFeature;id[unique=true];$catalogVersion;name;featureType[default='DEFAULT'];products(code,$catalogVersion)
+;hisense_xtraspace;;XtraSpace (SbS 2019);;nikKorosec
+;hisense_sensotech;;SensoTech (SbS 2019);;nikKorosec
+;hisense_bottleholder;;BottleHolder (SbS 2019);;nikKorosec
+
+# ----- manuals.impex ----- #
+
+#$productCatalog=ggProductCatalog
+#$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+#$siteResource=jar:com.hisense.hisensestore.constants.HisensestoreConstants&/hisensestore/import/sampledata/productCatalogs/$productCatalog
+
+#INSERT_UPDATE ggManual;id[unique=true];$catalogVersion;name;manualType[default='DEFAULT'];products(code,$catalogVersion)
+#;designLine_Manual;;Manual;;010000000020003999,010000000200039992,010000000200039996,010000002000399910,999929
+
+
+# ----- badges.impex ----- #2x
+
+$productCatalog=ggProductCatalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$siteResource=jar:com.hisense.hisensestore.constants.HisensestoreConstants&/hisensestore/import/sampledata/productCatalogs/$productCatalog
+
+INSERT_UPDATE ggbadge;id[unique=true];$catalogVersion;name;badgeType[default='DEFAULT'];products(code,$catalogVersion)
+;jagermeister_badge;;Badge;;nikKorosec
+
+# ----- stock.impex ----- # MAM2x
+
+$productCatalog=ggProductCatalog
+$productCatalogName=GG Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+
+#INSERT_UPDATE Warehouse;code[unique=true];name[lang=en];name[lang=de]
+#;warehouse_s;Warehouse South;Warehouse South
+#;warehouse_e;Warehouse East;Warehouse East
+#;warehouse_w;Warehouse West;Warehouse West
+#;warehouse_n;Warehouse North;Warehouse North
+
+#INSERT_UPDATE StockLevel;available;warehouse(code)[unique=true];inStockStatus(code);maxPreOrder;maxStockLevelHistoryCount;overSelling;preOrder;productCode[unique=true];reserved
+#;5;warehouse_s;forceInStock;0;0;0;0;nikKorosec;0
+
+#UPDATE Product;code[unique=true];$catalogVersion;stockLevels(productCode,warehouse(code));vendors(code)
+#;nikKorosec;;nikKorosec:warehouse_s;
+
+INSERT_UPDATE StockLevel;available;warehouse(code)[unique=true];inStockStatus(code);maxPreOrder;maxStockLevelHistoryCount;overSelling;preOrder;productCode[unique=true];reserved
+;5;6300_0100;forceInStock;0;0;0;0;nikKorosec;0
+
+UPDATE Product;code[unique=true];$catalogVersion;stockLevels(productCode,warehouse(code));vendors(code)
+;nikKorosec;;nikKorosec:6300_0100;
+
+#INSERT_UPDATE StockLevel;available;warehouse(code)[unique=true];inStockStatus(code);maxPreOrder;maxStockLevelHistoryCount;overSelling;preOrder;productCode[unique=true];reserved
+#;5;warehouse_s;forceInStock;0;0;0;0;999929;0
+
+#UPDATE Product;code[unique=true];$catalogVersion;stockLevels(productCode,warehouse(code));vendors(code)
+#;999929;;999929:warehouse_s;
+
+# ---- category-classification.impex ------ # MAM2x
+
+$productCatalog=ggProductCatalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$classCatalogVersion=catalogversion(catalog(id[default='ggClassificationCatalog']),version[default='1.0'])[unique=true,default='ggClassificationCatalog:1.0']
+$classSystemVersion=systemVersion(catalog(id[default='ggClassificationCatalog']),version[default='1.0'])[unique=true]
+$class=classificationClass(ClassificationClass.code,$classCatalogVersion)[unique=true]
+$supercategories=source(code, $classCatalogVersion)[unique=true]
+$categories=target(code, $catalogVersion)[unique=true]
+$attribute=classificationAttribute(code,$classSystemVersion)[unique=true]
+$unit=unit(code,$classSystemVersion)
+
+INSERT_UPDATE ClassificationClass;$classCatalogVersion;code[unique=true];allowedPrincipals(uid)[default='customergroup']
+;;1288
+
+INSERT_UPDATE ClassificationAttribute;$classSystemVersion;code[unique=true]
+;;Non-operating relative hu, 1288
+;;Dimensions W x D x H, 50
+
+INSERT_UPDATE CategoryCategoryRelation;$categories;$supercategories
+;1288;1288
+;1288;1288
+;1288;1288
+
+INSERT_UPDATE ClassAttributeAssignment;$class;$attribute;position;$unit;attributeType(code[default=string]);multiValued[default=false];range[default=false];localized[default=true];listable[default=false];listable_baseStores(uid);displayAlsoAttributeName[default=false]
+;1288;Non-operating relative hu, 1288;1;64;number;true;true
+;1288;Dimensions W x D x H, 50;0;24;
+
+# ----- category-class-lang.impex ----- # MAM
+
+$classCatalogVersion=catalogversion(catalog(id[default='ggClassificationCatalog']),version[default='1.0'])[unique=true,default='ggClassificationCatalog:1.0']
+$classSystemVersion=systemVersion(catalog(id[default='ggClassificationCatalog']),version[default='1.0'])[unique=true]
+
+$lang=en
+
+UPDATE ClassificationAttribute;code[unique=true];$classSystemVersion;name[lang=$lang]
+ ;Dimensions W x D x H, 50;;Dimensions W x D x H;
+ ;Non-operating relative hu, 1288;;Non-operating relative hu;
+
+$classCatalogVersion=catalogversion(catalog(id[default='ggClassificationCatalog']),version[default='1.0'])[unique=true,default='ggClassificationCatalog:1.0']
+$classSystemVersion=systemVersion(catalog(id[default='ggClassificationCatalog']),version[default='1.0'])[unique=true]
+
+$lang=sr
+
+UPDATE ClassificationAttribute;code[unique=true];$classSystemVersion;name[lang=$lang]
+ ;Dimensions W x D x H, 50;;Dimensions W x D x H;
+ ;Non-operating relative hu, 1288;;Non-operating relative hu;
+
+# ----- insert-product-classifications.impex ----- # MAM
+
+$productCatalog=ggProductCatalog
+$productCatalogName=GG Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$clAttrModifiers=system='ggClassificationCatalog',version='1.0',translator=de.hybris.platform.catalog.jalo.classification.impex.ClassificationAttributeTranslator,lang=en
+
+$feature1=@Non-operating relative hu, 1288[$clAttrModifiers];  
+INSERT_UPDATE Product;code[unique=true];$feature1;$catalogVersion;
+;nikKorosec;22,50;
+#;999929;22,50;
+
+$feature1=@Dimensions W x D x H, 50[$clAttrModifiers]; 
+$feature2=@Non-operating relative hu, 1288[$clAttrModifiers];
+INSERT_UPDATE Product;code[unique=true];$feature1;$feature2;$catalogVersion;
+;nikKorosec;33 x 22 x 11;20,50;
+
+# ----- 2x ----- # MAM 2x
+
+$productCatalog=ggProductCatalog
+$productCatalogName=GG Product Catalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$clAttrModifiers=system='ggClassificationCatalog',version='1.0',translator=de.hybris.platform.catalog.jalo.classification.impex.ClassificationAttributeTranslator,lang=en
+
+$feature1=@Dimensions W x D x H, 50[$clAttrModifiers];  # Dimensions W x D x Hin millimeter (mm)
+$feature2=@Non-operating relative hu, 1288[$clAttrModifiers];
+INSERT_UPDATE Product;code[unique=true];$feature1;$feature2;$catalogVersion;
+;nikKorosec;33 x 22 x 11;20,50;
+
+$productCatalog=ggProductCatalog
+#$productCatalogName=GG Product Catalog 2x
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+$clAttrModifiers=system='ggClassificationCatalog',version='1.0',translator=de.hybris.platform.catalog.jalo.classification.impex.ClassificationAttributeTranslator,lang=sr
+
+$feature1=@Dimensions W x D x H, 50[$clAttrModifiers];  # Dimensions W x D x Hin millimeter (mm)
+$feature2=@Non-operating relative hu, 1288[$clAttrModifiers];
+INSERT_UPDATE Product;code[unique=true];$feature1;$feature2;$catalogVersion;
+;nikKorosec;33 x 22 x 11;20,50;
+
+# ----- prices.impex -----# MAM
+
+$productCatalog=ggProductCatalog
+$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default='$productCatalog:Staged']
+$taxGroup=Europe1PriceFactory_PTG(code)[default=jp-vat-full]
+$priceGroup=pricegroup-hisense-rs
+
+$approved=approvalstatus(code)[default='approved']
+
+UPDATE Product;code[unique=true];$approved;$catalogVersion;$taxGroup
+;nikKorosec
+
+INSERT_UPDATE PriceRow;product(code,$catalogVersion)[unique=true];unit(code[unique=true,default=PCE]);currency(isocode)[unique=true];price;minqtd;unitFactor;net;fullPrice;ug(code)[unique=true,default=$priceGroup]
+;nikKorosec;pieces;RSD;10;1;1;false;
+
+INSERT_UPDATE ProductTaxCode;productCode[unique=true];taxCode;taxArea[unique=true]
+;nikKorosec;PC080601;US
+
+
+# ----- availability.impex ----- # MAM
+
+#$productCatalog=ggProductCatalog
+#$productCatalogName=GG Product Catalog
+#$catalogVersion=catalogversion(catalog(id[default=$productCatalog]),version[default='Staged'])[unique=true,default=$productCatalog:Staged]
+#$supercategories=supercategories(code, $catalogVersion)
+#$baseProduct=baseProduct(code,$catalogVersion)
+#$approved=approvalstatus(code)[default='check']
+#$availabilityGroup=pag-hisense-rs
+#$picture=picture(code,$catalogVersion)
+#$thumbnail=thumbnail(code,$catalogVersion)
+
+#INSERT_UPDATE ProductAvailabilityAssignment;product(code,$catalogVersion)[unique=true];availabilityGroup(id)[unique=true,default=$availabilityGroup];status(code)[default=approved];onlineDate[dateformat=dd.MM.yyyy,default=01.01.2018];offlineDate[dateformat=dd.MM.yyyy];$catalogVersion
+#;nikKorosec;;approved;;;
+
