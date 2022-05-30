@@ -1,0 +1,40 @@
+<section class="footer-upper">
+    <div class="subscriber-component">
+        <div class="email-subscription-container">
+            <div class="content">
+                <form [formGroup]="userEmails" (ngSubmit)="onSubmit()" id="mc-embedded-homepage-subscribe-form" name="mc-embedded-homepage-subscribe-form">
+                    <h3>{{ 'subscribe.slogan' | cxTranslate }}</h3>
+                    <img class="logo lazy entered loaded" src="../../../../assets/images/Hisense_logo.png">
+                    <div class="input-container form-group">
+                        <input (input)="displayContainer = false" [class.is-invalid] = "userEmails.get('userEmail')?.invalid && userEmails.get('userEmail')?.touched" placeholder="{{ 'subscribe.emailAddress' | cxTranslate }}" type="email" value="" name="EMAIL" class="form-control-center" formControlName="userEmail" />
+                        <input class="btn-subscribe" type="submit" [disabled]="!userEmails.valid" value="{{ 'subscribe.subscribeNow' | cxTranslate }}" />
+                    </div>
+                    <div *ngIf="(primEmail?.invalid && primEmail?.touched) || primEmail?.dirty;else onPageLoad">
+                        <p *ngIf="primEmail?.errors?.required" class="text-white">
+                            <b class="text-dark">⮿</b>  {{ 'subscribe.emailRequired' | cxTranslate }} <br> 
+                            <b class="text-dark">⮿</b>  {{ 'subscribe.invalidFormat' | cxTranslate }}
+                        </p>
+                        <p *ngIf="primEmail?.errors?.pattern" class="text-white">
+                            <b class="text-dark">⮿</b>  {{ 'subscribe.invalidFormat' | cxTranslate }} <br><br>
+                        </p>
+                        <p *ngIf="primEmail!.errors;else onValidation" class="text-white">
+                        </p>
+                        <ng-template #onValidation>
+                            <div id="contentInside" *ngIf="!displayContainer;else onSubscribe">
+                                <p><br><br></p>
+                            </div>
+                            <ng-template #onSubscribe>
+                                <p class="text-white">{{ 'subscribe.subscription' | cxTranslate }} <b class="text-white">{{userEmails.value.userEmail}}</b></p><br>
+                            </ng-template>
+                        </ng-template>
+                    </div>
+                    <ng-template #onPageLoad>
+                        <div>
+                            <p class="text-danger">{{ redirectMessage }}<br><br></p>
+                        </div>
+                    </ng-template>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
