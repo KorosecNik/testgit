@@ -1,0 +1,10 @@
+{
+  "subscribe": {
+    "slogan": "OSTANITE U AKTUELNOSTI SA",
+    "emailAddress": "Vaša email adresa",
+    "subscribeNow": "Pretplati se Sada",
+    "emailRequired": "Ovo polje je obavezno",
+    "invalidFormat": "Ovo nije validan format email adrese",
+    "subscription": "Thank you for subscribing!"
+  }
+}

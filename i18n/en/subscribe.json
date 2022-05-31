@@ -1,0 +1,10 @@
+{
+  "subscribe": {
+    "slogan": "STAY UP TO DATE WITH",
+    "emailAddress": "Your email address",
+    "subscribeNow": "Subscribe Now",
+    "emailRequired": "This field is required",
+    "invalidFormat": "Please provide a valid email address",
+    "subscription": "Thank you for subscribing!"
+  }
+}
