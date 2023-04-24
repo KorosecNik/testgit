@@ -7,3 +7,4 @@ export abstract class NewsLetterAdapter {
 }
 
 console.log("test2");
+console.log("test");
